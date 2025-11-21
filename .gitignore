@@ -1,0 +1,15 @@
+# Node modules
+node_modules/
+
+# Environment files
+.env
+
+# Prisma generated files
+prisma/generated/
+
+# Logs
+*.log
+
+# OS junk files
+.DS_Store
+Thumbs.db
