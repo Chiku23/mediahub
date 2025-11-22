@@ -7,7 +7,9 @@ import ffmpegBinary from "ffmpeg-static";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import "dotenv/config";
+import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Fix __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -19,13 +21,20 @@ ffmpeg.setFfmpegPath(ffmpegBinary);
 const app = express();
 app.use(express.json());
 
+app.use(cors({
+    origin: "*",
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization"
+}));
+
 // health check
 app.get("/", (req, res) => {
   res.json({ message: "Thumbnail service running" });
 });
 
-app.post("/thumbnail/:id", authenticateToken, async (req, res) => {
-  const id = parseInt(req.params.id);
+app.post("/thumbnail", authenticateToken, async (req, res) => {
+  const { mediafileID } = req.body;
+  const id = parseInt(mediafileID);
 
   const media = await prisma.mediaFile.findUnique({
     where: { id },
@@ -112,5 +121,5 @@ async function generateVideoThumbnail(inputPath, outputPath) {
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-    console.log(`Media service running on port:`, PORT);
+    console.log(`Thumbnail service running on port:`, PORT);
 });

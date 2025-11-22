@@ -2,11 +2,19 @@ import express from "express";
 import prisma from "./prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
 import { authenticateToken } from "./middleware/auth.js";
+import cors from "cors";
+import { logger } from "./config/helper.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+    origin: "*",
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization"
+}));
 
 // health check
 app.get("/", (req, res) => {
@@ -41,6 +49,8 @@ app.post('/signup', async (req, res) => {
             }
         });
 
+        logger("Created User "+user);
+
         return res.status(201).json({
             message: "User created successfully",
             userId: user.id
@@ -54,6 +64,7 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        logger("Trying login "+ email);
         // Basic validation
         if (!email || !password) {
             return res.status(400).json({ error: "Email and password are required" });
@@ -81,6 +92,8 @@ app.post('/login', async (req, res) => {
             { expiresIn: "1d" } // token valid for 1 day
         );
 
+        logger("Success login"+ email);
+
         return res.json({
             message: "Login successful",
             token: token
@@ -95,8 +108,8 @@ app.get("/verifyuser", authenticateToken, async (req, res) => {
     where: { id: req.user.id },
     select: { id: true, email: true, name: true, createdAt: true }
   });
-
-  res.json({ user });
+  logger("Verified User");
+  res.status(200).json({ user });
 });
 
 const PORT = process.env.PORT;
