@@ -1,17 +1,28 @@
-# Node modules
+#########################
+# Node
+#########################
 node_modules/
 
-# Environment files
+#########################
+# Environment Files
+#########################
 .env
+.env.*
+services/*/.env
 
-# Prisma generated files
-prisma/generated/
+#########################
+# Upload Folders
+#########################
+services/upload/uploads/
+services/upload/thumbnails/
 
+#########################
 # Logs
+#########################
 *.log
 
-# OS junk files
+#########################
+# System Files
+#########################
 .DS_Store
 Thumbs.db
-
-/generated/prisma
