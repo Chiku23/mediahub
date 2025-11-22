@@ -2,12 +2,18 @@ import express from "express";
 import prisma from "./prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
 import { authenticateToken } from "./middleware/auth.js";
+import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 app.use(express.json());
-
+app.use(cors({
+    origin: "*",
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization"
+}));
 
 app.get("/", (req, res) => {
   res.json({ message: "Media service running" });
@@ -23,7 +29,8 @@ app.get("/media", authenticateToken, async (req, res) => {
         type: true,
         size: true,
         status: true,
-        createdAt: true
+        createdAt: true,
+        thumbnail: true
       }
     });
 

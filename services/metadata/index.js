@@ -4,24 +4,28 @@ import authenticateToken from "./middleware/auth.js";
 import ffmpeg from "fluent-ffmpeg";
 import ffprobe from "ffprobe-static";
 import fs from "fs";
-import "dotenv/config";
 import path from "path";
 import { PDFDocument } from "pdf-lib";
 import { fileURLToPath } from "url";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { imageSize } = require("image-size");
-
+import cors from "cors";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+import dotenv from "dotenv";
+dotenv.config();
 
 // connect ffprobe to fluent-ffmpeg
 ffmpeg.setFfprobePath(ffprobe.path);
 
 const app = express();
 app.use(express.json());
-
+app.use(cors({
+    origin: "*",
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization"
+}));
 // health check
 app.get("/", (req, res) => {
   res.json({ message: "Metadata service running" });
@@ -31,9 +35,9 @@ app.get("/", (req, res) => {
 //   METADATA EXTRACTION
 // ======================
 
-app.post("/process/:id", authenticateToken, async (req, res) => {
-  const id = parseInt(req.params.id);
-
+app.post("/process", authenticateToken, async (req, res) => {
+  const { mediafileID } = req.body;
+  const id = parseInt(mediafileID);
   // get file from DB
   const media = await prisma.mediaFile.findUnique({
     where: { id },
@@ -49,9 +53,7 @@ app.post("/process/:id", authenticateToken, async (req, res) => {
     "upload",
     media.path // "uploads/filename"
   );
-  console.log(filePath);
-  const buffer = fs.readFileSync(filePath);
-console.log("First 8 bytes:", buffer.slice(0, 8));
+
   if (!fs.existsSync(filePath)) {
     console.error("FILE DOES NOT EXIST:", filePath);
     return res.status(404).json({
@@ -180,6 +182,6 @@ async function extractPdfMeta(filePath) {
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-    console.log(`Media service running on port:`, PORT);
+    console.log(`Metadata service running on port:`, PORT);
 });
 

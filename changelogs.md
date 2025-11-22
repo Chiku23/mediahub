@@ -1,8 +1,24 @@
                                             ========== MediaHUB @ 2025 ==========
                     ------------------------------------ BY CHIKU ------------------------------------
+## Version 0.2
+##### Release Date: xx xx xxxx
+
+* Helper Function
+  - Introduce a helper function to log things into a log file for each service
+  - It can be toggled using the DEBUG environment varible true/false value.
+
+* Upload to metadata and thumbnail generation
+  - Files are now have their metadata and thumbnail generated along with the upload process.
+
+* Nodemon and Service Run script
+  - Introduced nodemon to ease development, watch the file changes and restart server.
+  - Added Shell script to start all service at once.
+
+* Video upload fix
+  - Fixed the issue with video upload not working
 
 ## Version 0.1
-##### Release Date: xx xx xxxx
+##### Release Date: 22/November/2025
 
 * Initial Setup
   - Package installations.
