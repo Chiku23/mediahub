@@ -15,6 +15,7 @@ services/*/.env
 #########################
 services/upload/uploads/
 services/upload/thumbnails/
+services/upload/streams/
 
 #########################
 # Logs

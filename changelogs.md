@@ -17,6 +17,17 @@
 * Video upload fix
   - Fixed the issue with video upload not working
 
+* Transcoder Service
+  - Added a new service "transcoder" for encoding the uploaded videos into small parts and with multiple resolutions.
+  - Added script/package to run the services. (Pm2 and terminal script)
+
+* Edit and Delete media file details
+  - Added endpoint to handle the edit the media name.
+  - Added endpoint to handle the media deletion.
+
+* mysql > sqlite
+  - Replaced mysql with sqlite. It will ease the pain of project setup.
+
 ## Version 0.1
 ##### Release Date: 22/November/2025
 

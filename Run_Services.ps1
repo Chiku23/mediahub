@@ -12,3 +12,6 @@ Start-Process powershell -ArgumentList "cd services/metadata; npx nodemon index.
 
 # Thumbnail service
 Start-Process powershell -ArgumentList "cd services/thumbnail; npx nodemon index.js" -WindowStyle Normal
+
+# Transcoder service
+Start-Process powershell -ArgumentList "cd services/transcoder; npx nodemon index.js" -WindowStyle Normal
