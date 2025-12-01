@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 dotenv.config();
+import {logger} from "./config/helper.js"
 
 const app = express();
 app.use(express.json({ limit: "500mb" }));
@@ -64,12 +65,14 @@ app.post("/upload", authenticateToken, upload.single("file"), async (req, res) =
       path: dbPath, 
       type: file.mimetype,
       size: file.size,
+      originalName: file.originalname,
       status: "new"
     }
   });
 
   const THUMB_URL = process.env.THUMBNAIL_SERVICE_URL;
   const META_URL  = process.env.METADATA_SERVICE_URL;
+  const TRANSCODE_URL = process.env.TRANSCODER_SERVICE_URL;
 
   // Thumbnail Service - Generate thumbnails
   if (THUMB_URL) {
@@ -88,12 +91,29 @@ app.post("/upload", authenticateToken, upload.single("file"), async (req, res) =
       body : JSON.stringify({ mediafileID : media.id })
     }).catch(err => console.log("Metadata service error:", err));
   }
+  
+  // Transcoder Service - generate HLS stream
+  if (TRANSCODE_URL && file.mimetype.startsWith("video/")) {
+      fetch(`${TRANSCODE_URL}/transcode`, {
+          method: "POST",
+          headers: { 
+              Authorization: req.headers.authorization, 
+              "Content-Type": "application/json" 
+          },
+          body: JSON.stringify({
+              mediafileID: media.id,
+              path: dbPath  // uploads/filename.mp4
+          })
+      }).catch(err => console.log("Transcoder service error:", err));
+  }
   logger("upload complete");
   return res.json({
     message: "File uploaded",
     fileId: media.id
   });
 });
+
+
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
