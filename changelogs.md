@@ -1,7 +1,7 @@
                                             ========== MediaHUB @ 2025 ==========
                     ------------------------------------ BY CHIKU ------------------------------------
 ## Version 0.2
-##### Release Date: xx xx xxxx
+##### Release Date: 30/December/2025
 
 * Helper Function
   - Introduce a helper function to log things into a log file for each service
